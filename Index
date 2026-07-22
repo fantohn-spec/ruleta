@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aventuras por la Baja - Ruleta Oficial</title>
+    <style>
+        :root {
+            --brand-dark: #000814;
+            --brand-navy: #003566;
+            --brand-blue: #0077b6;
+            --brand-cyan: #00b4d8;
+            --brand-gold: #ffc300;
+            --brand-light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand-navy) 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Banner Publicitario Superior */
+        .top-promo-bar {
+            width: 100%;
+            background-color: var(--brand-gold);
+            color: var(--brand-dark);
+            text-align: center;
+            padding: 8px 10px;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        header {
+            text-align: center;
+            margin: 20px 10px 10px;
+        }
+
+        header h1 {
+            color: var(--brand-gold);
+            text-transform: uppercase;
+            font-size: 28px;
+            letter-spacing: 2px;
+            margin: 0 0 5px 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        header p {
+            color: var(--brand-cyan);
+            margin: 0;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            text-align: center;
+            max-width: 440px;
+            width: 90%;
+            margin-bottom: 30px;
+        }
+
+        /* Formulario */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        input {
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 2px solid var(--brand-cyan);
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--brand-gold);
+        }
+
+        .btn-action {
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(180deg, var(--brand-gold) 0%, #e6a100 100%);
+            color: var(--brand-dark);
+            font-weight: 800;
+            font-size: 16px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 195, 0, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 195, 0, 0.6);
+        }
+
+        .btn-action:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Ruleta */
+        .wheel-container {
+            position: relative;
+            width: 310px;
+            height: 310px;
+            margin: 15px auto;
+        }
+
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 6px solid var(--brand-gold);
+            box-shadow: 0 0 20px rgba(0, 180, 216, 0.5);
+            box-sizing: border-box;
+        }
+
+        .pointer {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 16px solid transparent;
+            border-right: 16px solid transparent;
+            border-top: 28px solid #ff0055;
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.5));
+            z-index: 10;
+        }
+
+        /* Sección Publicitaria (Ads Carousel / Cards) */
+        .ad-section {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .ad-section h3 {
+            font-size: 14px;
+            color: var(--brand-gold);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .ad-card {
+            background: rgba(0, 53, 102, 0.8);
+            border: 1px solid var(--brand-cyan);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ad-card img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--brand-cyan);
+        }
+
+        .ad-card-info h4 {
+            margin: 0;
+            color: var(--brand-light);
+            font-size: 14px;
+        }
+
+        .ad-card-info p {
+            margin: 3px 0 0 0;
+            color: var(--brand-cyan);
+            font-size: 12px;
+        }
+
+        /* Modal Comprobante */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 8, 20, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            color: #222;
+            padding: 25px;
+            border-radius: 20px;
+            max-width: 380px;
+            width: 85%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+
+        .ticket {
+            border: 2px dashed var(--brand-navy);
+            padding: 15px;
+            margin: 15px 0;
+            background: #f0f8ff;
+            border-radius: 10px;
+        }
+
+        .ticket h3 {
+            color: var(--brand-navy);
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+
+        .ticket p {
+            margin: 6px 0;
+            font-size: 14px;
+        }
+
+        .ticket-ad {
+            background: var(--brand-gold);
+            color: var(--brand-dark);
+            padding: 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .share-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .btn-ws { background: #25D366; color: white; text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 14px; }
+        .btn-fb { background: #1877F2; color: white; text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 14px; }
+
+        .fb-page-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--brand-blue);
+            text-decoration: underline;
+            font-weight: bold;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-promo-bar">
+        ⛵ ¡Descubre las mejores aventuras en la Península con Aventuras por la Baja! 🐋
+    </div>
+
+    <header>
+        <h1>Aventuras por la Baja</h1>
+        <p>Gira la ruleta y gana premios exclusivos para tu próximo viaje</p>
+    </header>
+
+    <div class="main-container">
+        <!-- Formulario Registro -->
+        <form id="userForm">
+            <input type="text" id="userName" placeholder="Tu Nombre Completo" required>
+            <input type="tel" id="userPhone" placeholder="Tu Teléfono (WhatsApp)" required>
+            <button type="submit" class="btn-action">Registrarme para Jugar</button>
+        </form>
+
+        <p id="attemptsInfo" style="display:none; color: var(--brand-gold); font-weight: bold; margin-bottom: 10px;"></p>
+
+        <!-- Ruleta -->
+        <div class="wheel-container">
+            <div class="pointer"></div>
+            <canvas id="wheel" width="310" height="310"></canvas>
+        </div>
+
+        <button id="spinBtn" class="btn-action" style="display:none; width: 100%; margin-top: 10px;" onclick="spin()">¡GIRAR RULETA!</button>
+
+        <!-- Banners Publicitarios Oficiales -->
+        <div class="ad-section">
+            <h3>Nuestras Experiencias Destacadas</h3>
+            
+            <div class="ad-card">
+                <div style="font-size:25px;">🐋</div>
+                <div class="ad-card-info">
+                    <h4>Avistamiento de Ballenas</h4>
+                    <p>Vive una experiencia inolvidable en el Mar de Cortés y el Pacífico.</p>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <div style="font-size:25px;">⛵</div>
+                <div class="ad-card-info">
+                    <h4>Paseos en Barco & Snorkel</h4>
+                    <p>Tours guiados por las mejores islas y playas de la Baja.</p>
+                </div>
+            </div>
+
+            <div class="ad-card">
+                <div style="font-size:25px;">🍷</div>
+                <div class="ad-card-info">
+                    <h4>Ruta del Vino & Gastronomía</h4>
+                    <p>Disfruta degustaciones y paisajes espectaculares.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Comprobante de Resultado -->
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <h2 id="modalTitle" style="color: var(--brand-navy); margin-top: 0;">Aventuras por la Baja</h2>
+            
+            <div class="ticket">
+                <h3>COMPROBANTE OFICIAL</h3>
+                <p><strong>Folio:</strong> <span id="ticketFolio"></span></p>
+                <p><strong>Cliente:</strong> <span id="ticketName"></span></p>
+                <p><strong>Teléfono:</strong> <span id="ticketPhone"></span></p>
+                <hr style="border: 0.5px solid #ccc;">
+                <p><strong>Premio obtenido:</strong></p>
+                <h2 id="ticketResult" style="color: var(--brand-blue); margin: 5px 0;"></h2>
+                
+                <div class="ticket-ad">
+                    📌 Presenta este folio al reservar tu tour en Aventuras por la Baja.
+                </div>
+            </div>
+            
+            <p style="font-size: 13px; margin-bottom: 10px;">¡Comparte tu folio en redes sociales para hacerlo válido!</p>
+            
+            <div class="share-btns">
+                <a id="wsShare" href="#" target="_blank" class="btn-ws">WhatsApp</a>
+                <a id="fbShare" href="#" target="_blank" class="btn-fb">Facebook</a>
+            </div>
+
+            <a href="https://www.facebook.com/aventuras.porlabaja" target="_blank" class="fb-page-link">
+                Visita nuestra página de Facebook
+            </a>
+            
+            <br><br>
+            <button class="btn-action" style="padding: 8px 16px; font-size: 14px;" onclick="closeModal()">Cerrar / Jugar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de Premios (80% Sigue Participando, 1% Viaje Gratis, 19% repartido con mayor peso en 10% desc y vino)
+        const prizes = [
+            { label: "Sigue Participando", weight: 80, color: "#003566" },
+            { label: "10% Descuento", weight: 7, color: "#0077b6" },
+            { label: "Botella de Vino", weight: 6, color: "#00b4d8" },
+            { label: "Barquito Gratis", weight: 3, color: "#ffc300" },
+            { label: "20% Descuento", weight: 3, color: "#023e8a" },
+            { label: "Viaje Gratis", weight: 1, color: "#ff0055" }
+        ];
+
+        const canvas = document.getElementById('wheel');
+        const ctx = canvas.getContext('2d');
+        const numSlices = prizes.length;
+        const sliceAngle = (2 * Math.PI) / numSlices;
+        let currentAngle = 0;
+        let isSpinning = false;
+        let userData = { name: "", phone: "", attempts: 0 };
+
+        // Audio sintetizado (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playBeep() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.value = 650;
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.04);
+        }
+
+        // Renderizado de Ruleta
+        function drawWheel() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const center = canvas.width / 2;
+            const radius = center - 8;
+
+            for (let i = 0; i < numSlices; i++) {
+                const angle = currentAngle + i * sliceAngle;
+                
+                // Sector
+                ctx.beginPath();
+                ctx.fillStyle = prizes[i].color;
+                ctx.moveTo(center, center);
+                ctx.arc(center, center, radius, angle, angle + sliceAngle);
+                ctx.lineTo(center, center);
+                ctx.fill();
+                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = "#ffffff";
+                ctx.stroke();
+
+                // Texto
+                ctx.save();
+                ctx.translate(center, center);
+                ctx.rotate(angle + sliceAngle / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 11px Arial";
+                ctx.fillText(prizes[i].label, radius - 12, 4);
+                ctx.restore();
+            }
+
+            // Centro con Logo / Nombre Marca
+            ctx.beginPath();
+            ctx.arc(center, center, 36, 0, 2 * Math.PI);
+            ctx.fillStyle = "#000814";
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "#ffc300";
+            ctx.stroke();
+
+            ctx.fillStyle = "#ffc300";
+            ctx.font = "bold 7.5px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("AVENTURAS", center, center - 4);
+            ctx.fillText("POR LA BAJA", center, center + 6);
+        }
+
+        drawWheel();
+
+        // Control de Registro y Límite de 4 Intentos por Nombre + Teléfono
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('userName').value.trim().toLowerCase();
+            const phone = document.getElementById('userPhone').value.trim();
+            const userKey = `ab_user_${name}_${phone}`;
+
+            let attempts = parseInt(localStorage.getItem(userKey) || "0");
+
+            if (attempts >= 4) {
+                alert("Has alcanzado el límite máximo de 4 intentos para estos datos.");
+                return;
+            }
+
+            userData = { 
+                name: document.getElementById('userName').value, 
+                phone: phone, 
+                attempts: attempts, 
+                key: userKey 
+            };
+            
+            document.getElementById('userForm').style.display = 'none';
+            document.getElementById('spinBtn').style.display = 'block';
+            updateAttemptsUI();
+        });
+
+        function updateAttemptsUI() {
+            const info = document.getElementById('attemptsInfo');
+            info.style.display = 'block';
+            info.innerHTML = `Hola <strong>${userData.name}</strong> | Intentos restantes: <strong>${4 - userData.attempts}</strong>`;
+        }
+
+        // Selección Probabilística
+        function getWeightedPrizeIndex() {
+            const rand = Math.random() * 100;
+            let cumulative = 0;
+            for (let i = 0; i < prizes.length; i++) {
+                cumulative += prizes[i].weight;
+                if (rand < cumulative) return i;
+            }
+            return 0;
+        }
+
+        // Animación de Giro
+        function spin() {
+            if (isSpinning) return;
+            if (userData.attempts >= 4) {
+                alert("Ya agostaste tus 4 intentos permitidos.");
+                return;
+            }
+
+            isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
+
+            // Registrar intento
+            userData.attempts++;
+            localStorage.setItem(userData.key, userData.attempts);
+            updateAttemptsUI();
+
+            const prizeIndex = getWeightedPrizeIndex();
+            
+            // Ángulo objetivo (apuntando al sector correcto arriba en 270 deg)
+            const targetSliceAngle = (3 * Math.PI / 2) - (prizeIndex * sliceAngle) - (sliceAngle / 2);
+            const extraRotations = 5 * 2 * Math.PI; 
+            const totalRotation = extraRotations + (targetSliceAngle - (currentAngle % (2 * Math.PI)));
+
+            let start = null;
+            const duration = 4200; 
+            let lastSoundAngle = currentAngle;
+            const startAngle = currentAngle;
+
+            function animate(timestamp) {
+                if (!start) start = timestamp;
+                const progress = (timestamp - start) / duration;
+
+                if (progress < 1) {
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    currentAngle = startAngle + (totalRotation * easeOut);
+                    
+                    if (Math.abs(currentAngle - lastSoundAngle) >= sliceAngle) {
+                        playBeep();
+                        lastSoundAngle = currentAngle;
+                    }
+
+                    drawWheel();
+                    requestAnimationFrame(animate);
+                } else {
+                    isSpinning = false;
+                    document.getElementById('spinBtn').disabled = false;
+                    showResult(prizes[prizeIndex].label);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // Modal Comprobante y Enlaces Redes Sociales
+        function showResult(prizeLabel) {
+            const folio = "AB-" + Math.floor(100000 + Math.random() * 900000);
+            const isWin = prizeLabel !== "Sigue Participando";
+
+            document.getElementById('modalTitle').innerText = isWin ? "¡FELICIDADES! 🎉" : "¡SUERTE PARA LA PRÓXIMA!";
+            document.getElementById('ticketFolio').innerText = folio;
+            document.getElementById('ticketName').innerText = userData.name;
+            document.getElementById('ticketPhone').innerText = userData.phone;
+            document.getElementById('ticketResult').innerText = prizeLabel;
+
+            // Enlaces compartir
+            const fbPageUrl = "https://www.facebook.com/aventuras.porlabaja";
+            const shareText = encodeURIComponent(`¡Obtuve "${prizeLabel}" en la Ruleta de Aventuras por la Baja! 🏜️⛵ Mi Folio de juego es: ${folio}. ¡Visita su página y reserva tu aventura! ${fbPageUrl}`);
+            
+            document.getElementById('wsShare').href = `https://api.whatsapp.com/send?text=${shareText}`;
+            document.getElementById('fbShare').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fbPageUrl)}&quote=${shareText}`;
+
+            document.getElementById('resultModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').style.display = 'none';
+            if (userData.attempts >= 4) {
+                document.getElementById('spinBtn').disabled = true;
+                document.getElementById('spinBtn').innerText = "SIN INTENTOS RESTANTES";
+            }
+        }
+    </script>
+</body>
+</html>
